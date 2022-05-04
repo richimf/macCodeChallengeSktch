@@ -25,9 +25,13 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
+    
+    private func createShapeOn(position: CGPoint) {
+        print("Coordinates x: \(position.x), y: \(position.y)")
+    }
 }
 extension ViewController: CanvasListener {
-    func onMouseClick() {
-        print(#function)
+    func onMouseClick(position: CGPoint) {
+        createShapeOn(position: position)
     }
 }

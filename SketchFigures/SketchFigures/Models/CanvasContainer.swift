@@ -8,7 +8,7 @@
 import Cocoa
 
 protocol CanvasListener {
-    func onMouseClick()
+    func onMouseClick(position: CGPoint)
 }
 
 final class CanvasContainer: NSView {
@@ -16,7 +16,8 @@ final class CanvasContainer: NSView {
     var delegate: CanvasListener?
     
     override func mouseDown(with theEvent: NSEvent) {
-        delegate?.onMouseClick()
+        let position = CGPoint(x: theEvent.locationInWindow.x, y: theEvent.locationInWindow.y)
+        delegate?.onMouseClick(position: position)
     }
     
     override func rightMouseDown(with theEvent: NSEvent) {
