@@ -748,9 +748,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="149" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VRJ-5j-cwA">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VRJ-5j-cwA">
                                 <rect key="frame" x="13" y="13" width="123" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="109" id="Dmc-Nt-k1S"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Update" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Qv-um-EKf">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -811,6 +813,11 @@
                                 </textFieldCell>
                             </textField>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="o2T-R3-kCT" firstAttribute="trailing" secondItem="VRJ-5j-cwA" secondAttribute="trailing" id="hRL-sZ-L76"/>
+                            <constraint firstItem="VRJ-5j-cwA" firstAttribute="leading" secondItem="o2T-R3-kCT" secondAttribute="leading" id="jiq-RL-fSz"/>
+                            <constraint firstItem="o2T-R3-kCT" firstAttribute="bottom" secondItem="VRJ-5j-cwA" secondAttribute="bottom" id="mL1-6e-nbv"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="en8-Gu-Qfq"/>
                         <viewLayoutGuide key="layoutMargins" id="o2T-R3-kCT"/>
                     </view>
@@ -823,16 +830,34 @@
         <scene sceneID="Wip-3i-0Zu">
             <objects>
                 <viewController id="N0j-HM-DXt" customClass="ViewController" customModule="SketchFigures" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="pYU-gW-gKn">
-                        <rect key="frame" x="0.0" y="0.0" width="302" height="300"/>
+                    <view key="view" wantsLayer="YES" id="pYU-gW-gKn">
+                        <rect key="frame" x="0.0" y="0.0" width="459" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="XVh-oE-lKC" customClass="CanvasContainer" customModule="SketchFigures" customModuleProvider="target">
+                                <rect key="frame" x="34" y="20" width="391" height="274"/>
+                                <shadow key="shadow" blurRadius="4">
+                                    <size key="offset" width="2" height="2"/>
+                                    <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </shadow>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="SjX-4Q-1jc" firstAttribute="bottom" secondItem="XVh-oE-lKC" secondAttribute="bottom" id="Bkw-3H-Sql"/>
+                            <constraint firstItem="SjX-4Q-1jc" firstAttribute="trailing" secondItem="XVh-oE-lKC" secondAttribute="trailing" constant="14" id="DMp-Uc-bmo"/>
+                            <constraint firstItem="XVh-oE-lKC" firstAttribute="leading" secondItem="SjX-4Q-1jc" secondAttribute="leading" constant="14" id="buq-I4-Y7Y"/>
+                            <constraint firstItem="SjX-4Q-1jc" firstAttribute="top" secondItem="XVh-oE-lKC" secondAttribute="top" id="kp6-Vo-e0U"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="UZH-Y0-fX5"/>
                         <viewLayoutGuide key="layoutMargins" id="SjX-4Q-1jc"/>
                     </view>
+                    <connections>
+                        <outlet property="canvas" destination="XVh-oE-lKC" id="Omb-oi-cwT"/>
+                    </connections>
                 </viewController>
                 <customObject id="PbK-id-av8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="814" y="694"/>
+            <point key="canvasLocation" x="893.5" y="694"/>
         </scene>
     </scenes>
 </document>
