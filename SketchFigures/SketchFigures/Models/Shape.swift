@@ -8,8 +8,7 @@
 import AppKit
 
 struct Shape {
-    var color: NSColor
-    var size: NSRect
-    var position: CGPoint
-    var stroke: CGFloat = 0.0
+    let color: NSColor
+    let stroke: CGFloat
+    let numberOfSides: UInt
 }
