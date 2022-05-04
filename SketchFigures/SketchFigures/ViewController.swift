@@ -10,14 +10,6 @@ import Cocoa
 class ViewController: NSViewController {
     
     @IBOutlet weak var canvas: CanvasContainer!
-//
-//    private lazy var canvas: CanvasContainer = {
-//        let frame = CGRect(x: 0.0, y: 0.0, width: 500, height: 500)
-//        let container = CanvasContainer(frame: frame)
-//        container.delegate = self
-//        container.needsDisplay = true
-//        return container
-//    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,22 +27,38 @@ class ViewController: NSViewController {
     }
 
     private func createShapeOn(position: CGPoint) {
-        print("Coordinates x: \(position.x), y: \(position.y)")
-        // TODO: ADJUST POSITION INTO CANVAS
-        let frame = CGRect(x: position.x, y: position.y, width: 20.0, height: 30.0)
-        let figure = Shape(color: NSColor.green, stroke: 2.0, numberOfSides: 4)
-        
-        let shape = ShapeView(shape: figure, frame: frame) {
+        let frame = CGRect(x: position.x-50, y: position.y-40, width: 20.0, height: 30.0)
+        let shapeModel = Shape(color: NSColor.green, stroke: 2.0, numberOfSides: 4)
+        let shapeView = ShapeView(shape: shapeModel, frame: frame) {
             let context = NSGraphicsContext.current?.cgContext
             ShapeFactory().draw(frame: frame, in: context, shape: .square)
         }
-        print("shape: \(shape.frame.origin)")
+        shapeView.setupGestures(target: self, delegate: self, selector: #selector(handlePan(_:)))
         self.view.updateLayer()
-        self.canvas.addSubview(shape)
+        self.canvas.addSubview(shapeView)
+    }
+
+    @objc private func handlePan(_ gesture: NSPanGestureRecognizer) {
+        guard let targetView = gesture.view as? ShapeView else { return }
+        let distance = gesture.translation(in: targetView)
+        let newCenter = CGPoint(x: targetView.frame.origin.x + distance.x,
+                                y: targetView.frame.origin.y + distance.y)
+        targetView.frame.origin = newCenter
+        gesture.setTranslation(CGPoint(x: 0, y: 0), in: targetView)
     }
 }
 extension ViewController: CanvasListener {
     func onMouseClick(position: CGPoint) {
         createShapeOn(position: position)
     }
+}
+// MARK: - GESTURES
+extension ViewController: NSGestureRecognizerDelegate {
+  func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    return true
+  }
+
+  func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldAttemptToRecognizeWith event: NSEvent) -> Bool {
+    return true
+  }
 }

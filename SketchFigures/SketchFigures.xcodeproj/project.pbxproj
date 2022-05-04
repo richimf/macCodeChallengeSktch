@@ -104,9 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				13A4B0A42821FEED00C1DF2A /* AppDelegate.swift */,
-				13A4B0A62821FEED00C1DF2A /* ViewController.swift */,
-				13534BE42822E0EB00AA0F23 /* ShapeFactory.swift */,
 				13A4B0D328220BE000C1DF2A /* Models */,
+				13A4B0A62821FEED00C1DF2A /* ViewController.swift */,
 				13A4B0A82821FEEF00C1DF2A /* Assets.xcassets */,
 				13A4B0AA2821FEEF00C1DF2A /* Main.storyboard */,
 				13A4B0AD2821FEEF00C1DF2A /* SketchFigures.entitlements */,
@@ -134,6 +133,7 @@
 		13A4B0D328220BE000C1DF2A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				13534BE42822E0EB00AA0F23 /* ShapeFactory.swift */,
 				13A4B0CF2822080900C1DF2A /* CanvasContainer.swift */,
 				13A4B0D128220BDC00C1DF2A /* Shape.swift */,
 				13534BE22822D6BC00AA0F23 /* ShapeView.swift */,
