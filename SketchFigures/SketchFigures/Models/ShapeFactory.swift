@@ -7,12 +7,16 @@
 
 import Cocoa
 
+enum ShapeType: Int, CaseIterable {
+    case circle, triangle, square, rectangle, pentagon, hexagon
+}
 final class ShapeFactory {
     
-    enum ShapeType {
-        case circle, triangle, square, rectangle, pentagon, hexagon
+    func random() -> ShapeType {
+        let randomInt = Int.random(in: 0...ShapeType.allCases.count)
+        return ShapeType(rawValue: randomInt) ?? .circle
     }
-        
+    
     func draw(frame: CGRect, in context: CGContext?, shape: ShapeType) {
         if shape == .rectangle || shape == .square {
             drawRect(frame: frame, inContext: context, borderColor: NSColor.red.cgColor, fillColor: NSColor.green.cgColor)

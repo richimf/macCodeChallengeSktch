@@ -31,7 +31,10 @@ class ViewController: NSViewController {
         let shapeModel = Shape(color: NSColor.green, stroke: 2.0, numberOfSides: 4)
         let shapeView = ShapeView(shape: shapeModel, frame: frame) {
             let context = NSGraphicsContext.current?.cgContext
-            ShapeFactory().draw(frame: frame, in: context, shape: .square)
+            let factory = ShapeFactory()
+            let shapeType = factory.random()
+            print("type: \(shapeType)")
+            factory.draw(frame: frame, in: context, shape: shapeType)
         }
         shapeView.setupGestures(target: self, delegate: self, selector: #selector(handlePan(_:)))
         self.view.updateLayer()
