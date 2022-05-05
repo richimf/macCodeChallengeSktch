@@ -12,7 +12,7 @@ final class ShapeFactory {
     func draw(shape: Shape, frame: CGRect, in context: CGContext?) {
         let type = shape.type
         let color = shape.color
-        if type == .rectangle || type == .square {
+        if type == .square {
             drawRect(frame: frame, inContext: context, fillColor: color)
         }
         if type == .circle {
@@ -58,7 +58,7 @@ final class ShapeFactory {
         path.closeSubpath()
         context?.setLineWidth(1.0)
         context?.setFillColor(fillColor)
-        context?.setStrokeColor(NSColor.red.cgColor)
+        context?.setStrokeColor(borderColor)
         context?.addPath(path)
         context?.drawPath(using: .fillStroke)
     }

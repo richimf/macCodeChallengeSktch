@@ -11,7 +11,7 @@ final class ShapeView: NSView {
 
     typealias DrawCompletion = () -> Void
     private let draw: DrawCompletion
-    private let shape: Shape
+    var shape: Shape
 
     init(shape: Shape, frame: CGRect, draw: @escaping DrawCompletion) {
         self.shape = shape
@@ -27,10 +27,21 @@ final class ShapeView: NSView {
         super.draw(dirtyRect)
         draw()
     }
-    
-    func setupGestures(target: Any?, delegate: NSGestureRecognizerDelegate?, selector: Selector?) {
+
+}
+extension ShapeView {
+    func setPanGesture(target: Any?, delegate: NSGestureRecognizerDelegate?, selector: Selector?) {
         let pan: NSPanGestureRecognizer = NSPanGestureRecognizer(target: target, action: selector)
         pan.delegate = delegate
         self.addGestureRecognizer(pan)
+    }
+    
+    func setClickGesture(target: AnyObject?, delegate: NSGestureRecognizerDelegate?, selector: Selector?) {
+        let clickGesture: NSClickGestureRecognizer = NSClickGestureRecognizer(target: target, action: selector)
+        clickGesture.delegate = delegate
+        clickGesture.target = target
+        clickGesture.numberOfClicksRequired = 1
+        clickGesture.action = selector
+        self.addGestureRecognizer(clickGesture)
     }
 }

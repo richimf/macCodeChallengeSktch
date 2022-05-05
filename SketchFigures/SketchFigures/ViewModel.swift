@@ -8,14 +8,14 @@
 import Cocoa
 
 final class ViewModel {
-
+    
     func build(at position: CGPoint) -> ShapeView {
         // Generate Random features of each shape
         let factory = ShapeFactory()
         let shapeType = RandomHelper.randomShapeType()
         let color = RandomHelper.randomColor() ?? .black
         let frame = RandomHelper.randomFrame(at: position)
-        let shape = Shape(color: color, type: shapeType)
+        let shape = Shape(color: color, type: shapeType, frame: frame)
         // Build the shape view
         let shapeView = ShapeView(shape: shape, frame: frame) {
             let context = NSGraphicsContext.current?.cgContext
@@ -23,4 +23,5 @@ final class ViewModel {
         }
         return shapeView
     }
+    
 }
