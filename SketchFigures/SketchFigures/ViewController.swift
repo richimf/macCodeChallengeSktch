@@ -10,6 +10,8 @@ import Cocoa
 class ViewController: NSViewController {
     
     @IBOutlet weak var canvas: CanvasContainer!
+    
+    private let viewModel = ViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,15 +29,7 @@ class ViewController: NSViewController {
     }
 
     private func createShapeOn(position: CGPoint) {
-        let frame = CGRect(x: position.x-50, y: position.y-40, width: 20.0, height: 30.0)
-        let shapeModel = Shape(color: NSColor.green, stroke: 2.0, numberOfSides: 4)
-        let shapeView = ShapeView(shape: shapeModel, frame: frame) {
-            let context = NSGraphicsContext.current?.cgContext
-            let factory = ShapeFactory()
-            let shapeType = factory.random()
-            print("type: \(shapeType)")
-            factory.draw(frame: frame, in: context, shape: shapeType)
-        }
+        let shapeView = viewModel.build(at: position)
         shapeView.setupGestures(target: self, delegate: self, selector: #selector(handlePan(_:)))
         self.view.updateLayer()
         self.canvas.addSubview(shapeView)
@@ -44,8 +38,7 @@ class ViewController: NSViewController {
     @objc private func handlePan(_ gesture: NSPanGestureRecognizer) {
         guard let targetView = gesture.view as? ShapeView else { return }
         let distance = gesture.translation(in: targetView)
-        let newCenter = CGPoint(x: targetView.frame.origin.x + distance.x,
-                                y: targetView.frame.origin.y + distance.y)
+        let newCenter = CGPoint(x: targetView.frame.origin.x + distance.x, y: targetView.frame.origin.y + distance.y)
         targetView.frame.origin = newCenter
         gesture.setTranslation(CGPoint(x: 0, y: 0), in: targetView)
     }
