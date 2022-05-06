@@ -9,9 +9,9 @@ import Cocoa
 
 final class FileManagerHelper {
 
-    private let extensionTypeName: String = "frijolito"
     private let key: String = "enableFileMenuItems"
-    private var fileURL: URL?
+    private let fileExtension: String = "frijolito"
+    private var fileURL: URL? // This stores the selected url path of an opened file
 
     /// This function open existing file and write content
     func saveFile<T: Encodable>(contents object: T) {
@@ -55,7 +55,7 @@ final class FileManagerHelper {
     
     /// Reads a selected file
     func openFile(completion: @escaping (ShapeMirrorStack) -> ()) {
-        let panel = setupOpenPanel(message: "Choose file with \".\(extensionTypeName)\" format",
+        let panel = setupOpenPanel(message: "Choose file with \".\(fileExtension)\" format",
                                    prompt: "Open",
                                    canChooseFiles: true, canChooseDirectories: true, canCreateDirectories: false)
         panel.begin() { (result) -> Void in
@@ -91,7 +91,7 @@ final class FileManagerHelper {
         savePanel.title = NSLocalizedString("Save file as...", comment: key)
         savePanel.nameFieldStringValue = ""
         savePanel.prompt = NSLocalizedString("Create", comment: key)
-        savePanel.allowedFileTypes = [self.extensionTypeName]
+        savePanel.allowedFileTypes = [self.fileExtension]
         return savePanel
     }
     

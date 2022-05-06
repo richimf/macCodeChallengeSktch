@@ -12,7 +12,6 @@ enum ShapeType: Int, CaseIterable {
 }
 struct Shape {
     var color: CGColor
-    var colorId: Int = 1
     let type: ShapeType
     var frame: CGRect
 }
@@ -20,21 +19,20 @@ extension Shape {
     func translate() -> ShapeMirror? {
         let type = self.type.rawValue
         let rect = Frame(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
-        return ShapeMirror(color: colorId, type: type, frame: rect)
+        return ShapeMirror(color: color.colorToHexString(), type: type, frame: rect)
     }
 }
 
 struct ShapeMirror: Codable {
-    var color: Int
+    var color: String
     let type: Int
     var frame: Frame
 }
 extension ShapeMirror {
     func translate() -> Shape? {
-        guard let color = ShapeColor(rawValue: self.color)?.getColor(),
-              let type = ShapeType(rawValue: self.type) else { return nil }
+        guard let type = ShapeType(rawValue: self.type) else { return nil }
         let rect = CGRect(x: frame.x, y: frame.y, width: frame.width, height: frame.height)
-        return Shape(color: color, colorId: self.color, type: type, frame: rect)
+        return Shape(color: self.color.colorWithHexString(), type: type, frame: rect)
     }
 }
 struct Frame: Codable {

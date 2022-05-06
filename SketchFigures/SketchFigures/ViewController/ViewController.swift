@@ -98,6 +98,7 @@ extension ViewController: NSGestureRecognizerDelegate {
 }
 
 extension ViewController: MenuEventDelegate, PresenterDelegate {
+
     func refreshView() {
         let stack = presenter.stackView
         stack.forEach { view in
