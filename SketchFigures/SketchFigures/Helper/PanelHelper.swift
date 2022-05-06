@@ -7,24 +7,21 @@
 
 import Cocoa
 
-final class FileManagerHelper {
-    
-    private let extensionTypeName: String = "richie"
-    private let key = "enableFileMenuItems"
-    
+final class PanelHelper {
+
+    private let extensionTypeName: String = "frijolito"
+    private let key: String = "enableFileMenuItems"
+
     /// This function open existing file and write content
     func saveFile(contents data: Data? = nil) {
-        let content = "some contet"
-        let openPanel = NSOpenPanel()
-        openPanel.message = NSLocalizedString("Choose file with \".\(extensionTypeName)\" format", comment: key)
-        openPanel.prompt = NSLocalizedString("Save", comment: key)
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = true
-        openPanel.canCreateDirectories = false
-        openPanel.begin()  { (result) -> Void in
+        let content = "some contet from saveFile"
+        let panel = setupOpenPanel(message: "Choose file with \".\(extensionTypeName)\" format",
+                                   prompt: "Save",
+                                   canChooseFiles: true, canChooseDirectories: true, canCreateDirectories: false)
+        panel.begin()  { (result) -> Void in
             if result == NSApplication.ModalResponse.OK {
                 let fileManager = FileManager.default
-                guard let fileWithExtensionURL = openPanel.url else { return }
+                guard let fileWithExtensionURL = panel.url else { return }
                 if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
                     do {
                         try content.write(to: fileWithExtensionURL, atomically: false, encoding: .utf8)
@@ -39,19 +36,12 @@ final class FileManagerHelper {
     /// This function creates and saves data into a new file
     func saveAs(contents data: Data? = nil) {
         let content = "fresh content"
-        let openPanel = NSOpenPanel()
-        openPanel.message = NSLocalizedString("Select folder where to save file", comment: key)
-        openPanel.prompt = NSLocalizedString("Select", comment: key)
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        openPanel.canCreateDirectories = true
-        openPanel.begin() { (result) -> Void in
+        let panel = setupOpenPanel(message: "Choose path...",
+                                   prompt: "Save as",
+                                   canChooseFiles: false, canChooseDirectories: true, canCreateDirectories: true)
+        panel.begin() { (result) -> Void in
             if result == NSApplication.ModalResponse.OK {
-                let savePanel = NSSavePanel()
-                savePanel.title = NSLocalizedString("Save file as...", comment: self.key)
-                savePanel.nameFieldStringValue = ""
-                savePanel.prompt = NSLocalizedString("Create", comment: self.key)
-                savePanel.allowedFileTypes = [self.extensionTypeName]
+                let savePanel = self.setupSavePanel()
                 let fileManager = FileManager.default
                 savePanel.begin() { (result) -> Void in
                     if result == NSApplication.ModalResponse.OK {
@@ -60,6 +50,7 @@ final class FileManagerHelper {
                         if !fileManager.fileExists(atPath: fileWithExtensionURL.path) {
                             fileManager.createFile(atPath: fileWithExtensionURL.path, contents: data, attributes: nil)
                         }
+                        // Once created the file, write data into it
                         if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
                             do {
                                 try content.write(to: fileWithExtensionURL, atomically: false, encoding: .utf8)
@@ -75,16 +66,13 @@ final class FileManagerHelper {
     
     /// Reads a selected file
     func openFile() {
-        let openPanel = NSOpenPanel()
-        openPanel.message = NSLocalizedString("Choose file with \".\(extensionTypeName)\" format", comment: key)
-        openPanel.prompt = NSLocalizedString("Open", comment: key)
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = true
-        openPanel.canCreateDirectories = false
-        openPanel.begin()  { (result) -> Void in
+        let panel = setupOpenPanel(message: "Choose file with \".\(extensionTypeName)\" format",
+                                   prompt: "Open",
+                                   canChooseFiles: true, canChooseDirectories: true, canCreateDirectories: false)
+        panel.begin()  { (result) -> Void in
             if result == NSApplication.ModalResponse.OK {
                 let fileManager = FileManager.default
-                guard let fileWithExtensionURL = openPanel.url else { return }
+                guard let fileWithExtensionURL = panel.url else { return }
                 if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
                     do {
                         let content = try String(contentsOf: fileWithExtensionURL, encoding: .utf8)
@@ -95,5 +83,24 @@ final class FileManagerHelper {
                 }
             }
         }
+    }
+    
+    private func setupOpenPanel(message: String, prompt: String, canChooseFiles: Bool, canChooseDirectories: Bool, canCreateDirectories: Bool) -> NSOpenPanel {
+        let openPanel = NSOpenPanel()
+        openPanel.message = NSLocalizedString(message, comment: key)
+        openPanel.prompt = NSLocalizedString(prompt, comment: key)
+        openPanel.canChooseFiles = canChooseFiles
+        openPanel.canChooseDirectories = canChooseDirectories
+        openPanel.canCreateDirectories = canCreateDirectories
+        return openPanel
+    }
+    
+    private func setupSavePanel() -> NSSavePanel {
+        let savePanel = NSSavePanel()
+        savePanel.title = NSLocalizedString("Save file as...", comment: key)
+        savePanel.nameFieldStringValue = ""
+        savePanel.prompt = NSLocalizedString("Create", comment: key)
+        savePanel.allowedFileTypes = [self.extensionTypeName]
+        return savePanel
     }
 }
