@@ -12,6 +12,7 @@ final class ViewController: NSViewController {
     @IBOutlet private weak var canvas: CanvasContainer!
     
     private let viewModel = ViewModel()
+    private var selectedView: ShapeView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +33,7 @@ final class ViewController: NSViewController {
         let shapeView = viewModel.build(at: position)
         shapeView.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
         shapeView.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
-        self.view.updateLayer()
+        self.canvas.updateLayer()
         self.canvas.addSubview(shapeView)
     }
 
@@ -44,25 +45,34 @@ final class ViewController: NSViewController {
         shapeView.frame.origin = newCenter
         shapeView.shape.frame = shapeView.frame
         gesture.setTranslation(CGPoint.zero, in: shapeView)
+        // Update selected view reference
+        selectedView = shapeView
         // Update Inspector
         updateInspectorAtt(from: shapeView)
     }
     
     @objc private func handleClick(_ gesture: NSClickGestureRecognizer) {
         guard let shapeView = gesture.view as? ShapeView else { return }
+        selectedView = shapeView
         // Update Inspector
         updateInspectorAtt(from: shapeView)
     }
     
+    // MARK: - INSPECTOR
     private func updateInspectorAtt(from shapeView: ShapeView) {
         guard let parent = self.parent else { return }
         let entityManager = ShapeEntityManager(parent: parent)
-        entityManager.updateInspectorView(with: shapeView.shape)
+        entityManager.updateInspectorView(shapeView.shape)
     }
     
-    func updateFromInspector() {
-        print("update selected shape")
-    }
+    func updateFromInspector(_ shape: Shape?) {
+        guard let shape = shape else { return }
+        let view = viewModel.updateShape(shape: shape)
+        view.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
+        view.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
+        guard let oldView = selectedView else { return }
+        self.canvas.replaceSubview(oldView, with: view)
+     }
 }
 // MARK: - MOUSE EVENTS
 extension ViewController: CanvasListener {

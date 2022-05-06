@@ -15,16 +15,16 @@ final class ShapeEntityManager {
         self.parent = parent as? NSSplitViewController
     }
     
-    func updateInspectorView(with data: Shape) {
+    func updateInspectorView(_ shape: Shape) {
         guard let splitViewController = parent,
               let inspectorVC = splitViewController.splitViewItems.first?.viewController as? InspectorViewController else { return }
-        inspectorVC.data = data
+        inspectorVC.shape = shape
         inspectorVC.updateInspectorData()
     }
 
-    func updateCanvasView(with data: Shape) {
+    func updateCanvasView(_ shape: Shape?) {
         guard let splitViewController = parent,
               let canvasVC = splitViewController.splitViewItems.last?.viewController as? ViewController else { return }
-        canvasVC.updateFromInspector()
+        canvasVC.updateFromInspector(shape)
     }
 }

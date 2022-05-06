@@ -15,38 +15,37 @@ final class InspectorViewController: NSViewController {
     @IBOutlet private weak var height: NSTextField!
     @IBOutlet private weak var colorWell: NSColorWell!
     
-    var data: Shape?
+    var shape: Shape?
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     @IBAction func update(_ sender: Any) {
-        print(#function)
-        updateCanvas()
+        guard let type = shape?.type, let frame = shape?.frame else { return }
+        // New Frame
+        let newFrame = CGRect(x: positionX.stringValue.CGFloatValue() ?? frame.origin.x,
+                              y: positionY.stringValue.CGFloatValue() ?? frame.origin.y,
+                              width: width.stringValue.CGFloatValue() ?? frame.width,
+                              height: height.stringValue.CGFloatValue() ?? frame.height)
+        // Updated shape
+        let newShape = Shape(color: colorWell.color.cgColor, type: type, frame: newFrame)
+        self.shape = newShape
+        updateCanvas(newShape: self.shape)
     }
     
-    func updateCanvas() {
-        guard let parent = self.parent, let updatedShape = data else { return }
+    func updateCanvas(newShape: Shape?) {
+        guard let parent = self.parent else { return }
         let entityManager = ShapeEntityManager(parent: parent)
-        entityManager.updateCanvasView(with: updatedShape)
+        entityManager.updateCanvasView(newShape)
     }
     
     func updateInspectorData() {
-        if let originX = data?.frame.origin.x {
-            self.positionX.stringValue = originX.format()
-        }
-        if let originY = data?.frame.origin.y {
-            self.positionY.stringValue = originY.format()
-        }
-        if let width = data?.frame.width {
-            self.width.stringValue =  width.format()
-        }
-        if let height = data?.frame.height {
-            self.height.stringValue =  height.format() 
-        }
-        if let color = data?.color {
-            colorWell.color = NSColor(cgColor: color) ?? .clear
-        }
+        guard let frame = shape?.frame, let color = shape?.color else { return }
+        self.positionX.stringValue = frame.origin.x.format()
+        self.positionY.stringValue = frame.origin.y.format()
+        self.width.stringValue = frame.width.format()
+        self.height.stringValue = frame.height.format()
+        colorWell.color = NSColor(cgColor: color) ?? .clear
     }
 }

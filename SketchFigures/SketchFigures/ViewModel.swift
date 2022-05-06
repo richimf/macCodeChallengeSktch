@@ -24,4 +24,13 @@ final class ViewModel {
         return shapeView
     }
     
+    func updateShape(shape: Shape) -> ShapeView {
+        let factory = ShapeFactory()
+        let shapeView = ShapeView(shape: shape, frame: shape.frame) {
+            let context = NSGraphicsContext.current?.cgContext
+            factory.draw(shape: shape, frame: shape.frame, in: context)
+        }
+        return shapeView
+    }
+    
 }
