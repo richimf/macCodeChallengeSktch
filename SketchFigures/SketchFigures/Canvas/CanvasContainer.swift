@@ -26,7 +26,7 @@ final class CanvasContainer: NSView {
     }
 
     override func mouseDown(with theEvent: NSEvent) {
-        let eventPosition = CGPoint(x: theEvent.locationInWindow.x, y: theEvent.locationInWindow.y)
+        let eventPosition = CGPoint(x: theEvent.locationInWindow.x - 250, y: theEvent.locationInWindow.y - 50)
         delegate?.onMouseClick(position: eventPosition)
     }
     

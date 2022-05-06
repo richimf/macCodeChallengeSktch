@@ -8,9 +8,10 @@
 import AppKit
 
 enum ShapeType: Int, CaseIterable {
-    case circle, square, rectangle, triangle//, square, rectangle, pentagon, hexagon
+    case circle, square, triangle
 }
 struct Shape {
-    let color: CGColor
+    var color: CGColor
     let type: ShapeType
+    var frame: CGRect
 }
