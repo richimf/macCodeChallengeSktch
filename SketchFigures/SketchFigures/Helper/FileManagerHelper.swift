@@ -7,37 +7,29 @@
 
 import Cocoa
 
-final class PanelHelper {
+final class FileManagerHelper {
 
     private let extensionTypeName: String = "frijolito"
     private let key: String = "enableFileMenuItems"
+    private var fileURL: URL?
 
     /// This function open existing file and write content
-    func saveFile(contents data: Data? = nil) {
-        let content = "some contet from saveFile"
-        let panel = setupOpenPanel(message: "Choose file with \".\(extensionTypeName)\" format",
-                                   prompt: "Save",
-                                   canChooseFiles: true, canChooseDirectories: true, canCreateDirectories: false)
-        panel.begin()  { (result) -> Void in
-            if result == NSApplication.ModalResponse.OK {
-                let fileManager = FileManager.default
-                guard let fileWithExtensionURL = panel.url else { return }
-                if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
-                    do {
-                        try content.write(to: fileWithExtensionURL, atomically: false, encoding: .utf8)
-                    } catch {
-                        print("cant save file as")
-                    }
-                }
+    func saveFile<T: Encodable>(contents object: T) {
+        if self.fileURL == nil {
+            saveAs(contents: object)
+        } else {
+            guard let fileWithExtensionURL = self.fileURL else { return }
+            let fileManager = FileManager.default
+            if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
+                writeJson(object: object, fileWithExtensionURL)
             }
         }
     }
-    
+
     /// This function creates and saves data into a new file
-    func saveAs(contents data: Data? = nil) {
-        let content = "fresh content"
+    func saveAs<T: Encodable>(contents object: T) {
         let panel = setupOpenPanel(message: "Choose path...",
-                                   prompt: "Save as",
+                                   prompt: "Choose",
                                    canChooseFiles: false, canChooseDirectories: true, canCreateDirectories: true)
         panel.begin() { (result) -> Void in
             if result == NSApplication.ModalResponse.OK {
@@ -46,17 +38,14 @@ final class PanelHelper {
                 savePanel.begin() { (result) -> Void in
                     if result == NSApplication.ModalResponse.OK {
                         guard let fileWithExtensionURL = savePanel.url else { return }
+                        self.fileURL = fileWithExtensionURL
                         // Check if File does not exists, create file
                         if !fileManager.fileExists(atPath: fileWithExtensionURL.path) {
-                            fileManager.createFile(atPath: fileWithExtensionURL.path, contents: data, attributes: nil)
+                            fileManager.createFile(atPath: fileWithExtensionURL.path, contents: nil, attributes: nil)
                         }
                         // Once created the file, write data into it
                         if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
-                            do {
-                                try content.write(to: fileWithExtensionURL, atomically: false, encoding: .utf8)
-                            } catch {
-                                print("cant save file as")
-                            }
+                            self.writeJson(object: object, fileWithExtensionURL)
                         }
                     }
                 }
@@ -65,18 +54,20 @@ final class PanelHelper {
     }
     
     /// Reads a selected file
-    func openFile() {
+    func openFile(completion: @escaping (ShapeMirrorStack) -> ()) {
         let panel = setupOpenPanel(message: "Choose file with \".\(extensionTypeName)\" format",
                                    prompt: "Open",
                                    canChooseFiles: true, canChooseDirectories: true, canCreateDirectories: false)
-        panel.begin()  { (result) -> Void in
+        panel.begin() { (result) -> Void in
             if result == NSApplication.ModalResponse.OK {
                 let fileManager = FileManager.default
                 guard let fileWithExtensionURL = panel.url else { return }
+                self.fileURL = fileWithExtensionURL
                 if fileManager.isReadableFile(atPath: fileWithExtensionURL.path) {
                     do {
-                        let content = try String(contentsOf: fileWithExtensionURL, encoding: .utf8)
-                        print(content)
+                        let data = try Data(contentsOf: fileWithExtensionURL)
+                        let jsonData = try JSONDecoder().decode(ShapeMirrorStack.self, from: data)
+                        completion(jsonData)
                     } catch {
                         print("cant open file")
                     }
@@ -102,5 +93,17 @@ final class PanelHelper {
         savePanel.prompt = NSLocalizedString("Create", comment: key)
         savePanel.allowedFileTypes = [self.extensionTypeName]
         return savePanel
+    }
+    
+    private func writeJson<T: Encodable>(object: T, _ fileWithExtensionURL: URL) {
+        do {
+            let data = try JSONEncoder().encode(object)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("error json string")
+                return }
+            try jsonString.write(to: fileWithExtensionURL, atomically: false, encoding: .utf8)
+        } catch {
+            print("cant save file as")
+        }
     }
 }

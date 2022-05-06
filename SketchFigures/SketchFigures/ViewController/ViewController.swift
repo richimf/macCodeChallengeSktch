@@ -11,8 +11,9 @@ final class ViewController: NSViewController {
     
     @IBOutlet private weak var canvas: CanvasContainer!
     
-    private let viewModel = ViewModel()
+    private let presenter = Presenter()
     private var selectedView: ShapeView?
+    private var appDelegate: AppDelegate? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,21 +22,25 @@ final class ViewController: NSViewController {
         self.view.wantsLayer = true
         self.view.layer?.backgroundColor = NSColor.lightGray.cgColor
         self.view.addSubview(canvas)
+        
+        appDelegate = NSApplication.shared.delegate as? AppDelegate
+        appDelegate?.menuEventDelegate = self
+        presenter.delegate = self
     }
 
     override var representedObject: Any? {
         didSet {
-         }
+        }
     }
 
     private func createShapeOn(position: CGPoint) {
-        // TODO: MOVE THIS TO THE VIEWMODEL
-        let shapeView = viewModel.build(at: position)
+        let shapeView = presenter.build(at: position)
         shapeView.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
         shapeView.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
         updateInspectorAtt(from: shapeView)
         self.canvas.updateLayer()
         self.canvas.addSubview(shapeView)
+        presenter.stackView.append(shapeView)
     }
 
     // MARK: - GESTURE SELECTORS
@@ -62,13 +67,13 @@ final class ViewController: NSViewController {
         selectedView = shapeView
         // Update view into inspector
         guard let parent = self.parent else { return }
-        let entityManager = ShapeEntityManager(parent: parent)
+        let entityManager = ShapeUpdaterManager(parent: parent)
         entityManager.updateInspectorView(shapeView.shape)
     }
     
     func updateFromInspector(_ shape: Shape?) {
         guard let shape = shape else { return }
-        let view = viewModel.updateShape(shape: shape)
+        let view = presenter.updateShape(shape: shape)
         view.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
         view.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
         guard let oldView = selectedView else { return }
@@ -91,3 +96,27 @@ extension ViewController: NSGestureRecognizerDelegate {
     return true
   }
 }
+
+extension ViewController: MenuEventDelegate, PresenterDelegate {
+    func refreshView() {
+        let stack = presenter.stackView
+        stack.forEach { view in
+            view.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
+            view.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
+            self.canvas.addSubview(view)
+        }
+    }
+    
+    func openFile() {
+        presenter.open()
+    }
+    
+    func save() {
+        presenter.save()
+    }
+    
+    func saveAs() {
+        presenter.saveAs()
+    }
+}
+

@@ -7,14 +7,14 @@
 
 import Cocoa
 
-final class ShapeEntityManager {
+final class ShapeUpdaterManager {
     
     private let parent: NSSplitViewController?
     
     init(parent: NSViewController) {
         self.parent = parent as? NSSplitViewController
     }
-    
+
     func updateInspectorView(_ shape: Shape) {
         guard let splitViewController = parent,
               let inspectorVC = splitViewController.splitViewItems.first?.viewController as? InspectorViewController else { return }

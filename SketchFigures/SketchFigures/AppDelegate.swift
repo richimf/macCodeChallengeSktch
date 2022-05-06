@@ -10,7 +10,7 @@ import Cocoa
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     
-    private let fileManager = PanelHelper()
+    var menuEventDelegate: MenuEventDelegate?
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -25,15 +25,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBAction func openFile(_ sender: Any) {
-        fileManager.openFile()
+        menuEventDelegate?.openFile()
     }
     
     @IBAction func save(_ sender: Any) {
-        fileManager.saveFile()
+        menuEventDelegate?.save()
     }
 
     @IBAction func saveAs(_ sender: Any) {
-        fileManager.saveAs()
+        menuEventDelegate?.saveAs()
     }
 }
 
