@@ -1,4 +1,4 @@
-# Code Challenge Sktch
+# Code Challenge Sketch
 ### by Ricardo Montesinos Fernandez
 
 [![Swift](https://img.shields.io/badge/Swift-5.6.0-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.3_5.4_5.5_5.6-Orange?style=flat-square)
