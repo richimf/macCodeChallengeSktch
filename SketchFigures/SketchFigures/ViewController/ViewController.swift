@@ -33,6 +33,7 @@ final class ViewController: NSViewController {
         let shapeView = viewModel.build(at: position)
         shapeView.setPanGesture(target: self, delegate: self, selector: #selector(handlePan(_:)))
         shapeView.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
+        updateInspectorAtt(from: shapeView)
         self.canvas.updateLayer()
         self.canvas.addSubview(shapeView)
     }
@@ -45,21 +46,21 @@ final class ViewController: NSViewController {
         shapeView.frame.origin = newCenter
         shapeView.shape.frame = shapeView.frame
         gesture.setTranslation(CGPoint.zero, in: shapeView)
-        // Update selected view reference
-        selectedView = shapeView
         // Update Inspector
         updateInspectorAtt(from: shapeView)
     }
     
     @objc private func handleClick(_ gesture: NSClickGestureRecognizer) {
         guard let shapeView = gesture.view as? ShapeView else { return }
-        selectedView = shapeView
         // Update Inspector
         updateInspectorAtt(from: shapeView)
     }
     
     // MARK: - INSPECTOR
     private func updateInspectorAtt(from shapeView: ShapeView) {
+        // Update selected view reference
+        selectedView = shapeView
+        // Update view into inspector
         guard let parent = self.parent else { return }
         let entityManager = ShapeEntityManager(parent: parent)
         entityManager.updateInspectorView(shapeView.shape)
