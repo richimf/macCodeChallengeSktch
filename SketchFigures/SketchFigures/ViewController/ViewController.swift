@@ -39,8 +39,8 @@ final class ViewController: NSViewController {
         shapeView.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
         updateInspectorAtt(from: shapeView)
         self.canvas.updateLayer()
-        self.canvas.addSubview(shapeView)
         presenter.stackView.append(shapeView)
+        self.canvas.subviews = presenter.stackView
     }
 
     // MARK: - GESTURE SELECTORS
@@ -78,6 +78,8 @@ final class ViewController: NSViewController {
         view.setClickGesture(target: self, delegate: self, selector: #selector(handleClick(_:)))
         guard let oldView = selectedView else { return }
         self.canvas.replaceSubview(oldView, with: view)
+        presenter.stackView = []
+        presenter.stackView = self.canvas.subviews.compactMap { $0 as? ShapeView }
      }
 }
 // MARK: - MOUSE EVENTS
