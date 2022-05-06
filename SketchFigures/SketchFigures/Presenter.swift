@@ -7,8 +7,17 @@
 
 import Cocoa
 
-final class ViewModel {
-    
+protocol PresenterDelegate {
+    func refreshView()
+}
+
+final class Presenter {
+        
+    private let fileManager = FileManagerHelper()
+    var delegate: PresenterDelegate?
+    var stackView: [ShapeView] = []
+
+    // MARK: - SHAPE CREATION AND UPDATE
     func build(at position: CGPoint) -> ShapeView {
         // Generate Random features of each shape
         let factory = ShapeFactory()
@@ -33,4 +42,24 @@ final class ViewModel {
         return shapeView
     }
     
+    // MARK: - FILE MANAGMENT
+    func open() {
+        fileManager.openFile() { shapeMirrorStack in
+            shapeMirrorStack.shapes.forEach { shapeMirror in
+                self.stackView.append(self.updateShape(shape: shapeMirror.translate()!))
+            }
+            self.delegate?.refreshView()
+        }
+    }
+    
+    func save() {
+        let shapes = self.stackView.compactMap { $0.shape.translate() }
+        let mirrorStack = ShapeMirrorStack(shapes: shapes)
+        fileManager.saveFile(contents: mirrorStack)
+    }
+    
+    func saveAs() {
+        let data = self.stackView.last
+        fileManager.saveAs(contents: data?.shape.translate())
+    }
 }

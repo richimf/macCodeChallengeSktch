@@ -36,7 +36,7 @@ final class InspectorViewController: NSViewController {
     
     func updateCanvas(newShape: Shape?) {
         guard let parent = self.parent else { return }
-        let entityManager = ShapeEntityManager(parent: parent)
+        let entityManager = ShapeUpdaterManager(parent: parent)
         entityManager.updateCanvasView(newShape)
     }
     

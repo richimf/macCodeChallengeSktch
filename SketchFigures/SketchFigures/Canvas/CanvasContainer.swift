@@ -11,6 +11,7 @@ protocol CanvasListener {
     func onMouseClick(position: CGPoint)
 }
 
+/// This class is the white canvas displayed on the screen
 final class CanvasContainer: NSView {
     
     var delegate: CanvasListener?
